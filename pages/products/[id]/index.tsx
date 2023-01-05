@@ -23,7 +23,7 @@ const images = [
   },
 ];
 
-const Products = () => {
+const Product = () => {
   const router = useRouter();
   const { id: productId } = router.query;
 
@@ -96,4 +96,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Product;
