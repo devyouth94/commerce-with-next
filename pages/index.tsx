@@ -6,12 +6,19 @@ import { useRef, useState, useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
+export type Product = {
+  id: number;
+  name: string;
+  contents: string | null;
+  createdAt: string;
+};
+
 export default function Home() {
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState<Product[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch('/api/get-item')
+    fetch('/api/get-products')
       .then((res) => res.json())
       .then((data) => setProduct(data.items));
   }, []);
@@ -36,29 +43,13 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
+      <main>
+        <div>
+          {product?.map((item) => (
+            <div key={item.id}>
+              {item.name} {item.createdAt}
+            </div>
+          ))}
         </div>
       </main>
     </>
