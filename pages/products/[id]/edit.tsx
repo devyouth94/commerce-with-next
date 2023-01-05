@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
 import Image from 'next/legacy/image';
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Carousel from 'nuka-carousel/lib/carousel';
-import { convertFromRaw } from 'draft-js';
+import { convertFromRaw, convertToRaw } from 'draft-js';
 import { EditorState } from 'draft-js';
 
 import CustomEditor from 'components/Editor';
@@ -23,7 +22,7 @@ const images = [
   },
 ];
 
-const Products = () => {
+const Edit = () => {
   const router = useRouter();
   const { id: productId } = router.query;
 
@@ -46,25 +45,24 @@ const Products = () => {
     }
   }, [productId]);
 
+  const handleSave = () => {
+    if (editorState) {
+      fetch(`/api/update-product`, {
+        method: 'POST',
+        body: JSON.stringify({
+          id: productId,
+          contents: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert('Success');
+        });
+    }
+  };
+
   return (
     <>
-      <Head>
-        <meta
-          property="og:url"
-          content="http://www.nytimes.com/2015/02/19/arts/international/when-great-minds-dont-think-alike.html"
-        />
-        <meta property="og:type" content="article" />
-        <meta property="og:title" content="When Great Minds Don’t Think Alike" />
-        <meta
-          property="og:description"
-          content="How much does culture influence creative thinking?"
-        />
-        <meta
-          property="og:image"
-          content="http://static01.nyt.com/images/2015/02/19/arts/international/19iht-btnumbers19A/19iht-btnumbers19A-facebookJumbo-v2.jpg"
-        />
-      </Head>
-
       <Carousel autoplay withoutControls wrapAround slideIndex={index}>
         {images.map((image) => (
           <Image
@@ -91,9 +89,15 @@ const Products = () => {
         ))}
       </div>
 
-      {editorState && <CustomEditor editorState={editorState} readOnly />}
+      {editorState && (
+        <CustomEditor
+          editorState={editorState}
+          onEditorStateChange={setEditorState}
+          onSave={handleSave}
+        />
+      )}
     </>
   );
 };
 
-export default Products;
+export default Edit;
