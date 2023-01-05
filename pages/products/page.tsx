@@ -1,29 +1,32 @@
 import { products } from '@prisma/client';
 import Image from 'next/legacy/image';
 import { useCallback, useEffect, useState } from 'react';
+import { Pagination } from '@mantine/core';
 
 const TAKE = 9;
 
 const Products = () => {
-  const [skip, setSkip] = useState(0);
   const [products, setProducts] = useState<products[]>([]);
+  const [totalPage, setTotalPage] = useState(0);
+  const [activePage, setPage] = useState(1);
 
   useEffect(() => {
+    fetch(`/api/get-products-count`)
+      .then((res) => res.json())
+      .then((data) => setTotalPage(Math.ceil(data.items / TAKE)));
+
     fetch(`/api/get-products?skip=0&take=${TAKE}`)
       .then((res) => res.json())
       .then((data) => setProducts(data.items));
   }, []);
 
-  const getProducts = useCallback(() => {
-    const next = skip + TAKE;
-    fetch(`/api/get-products?skip=${next}&take=${TAKE}`)
+  useEffect(() => {
+    const skip = TAKE * (activePage - 1);
+
+    fetch(`/api/get-products?skip=${skip}&take=${TAKE}`)
       .then((res) => res.json())
-      .then((data) => {
-        const list = products.concat(data.items);
-        setProducts(list);
-      });
-    setSkip(next);
-  }, [products, skip]);
+      .then((data) => setProducts(data.items));
+  }, [activePage]);
 
   return (
     <div className="px-36 mt-36 mb-36">
@@ -49,9 +52,9 @@ const Products = () => {
         ))}
       </div>
 
-      <button className="w-full rounded mt-20 bg-zinc-200 p-4" onClick={getProducts}>
-        더보기
-      </button>
+      <div className="w-full flex justify-center mt-5">
+        <Pagination page={activePage} onChange={setPage} total={totalPage} />
+      </div>
     </div>
   );
 };
