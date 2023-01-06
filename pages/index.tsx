@@ -1,7 +1,5 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import { Inter } from '@next/font/google';
-import styles from 'styles/Home.module.css';
 import { useRef, useState, useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -16,12 +14,6 @@ export type Product = {
 export default function Home() {
   const [product, setProduct] = useState<Product[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    fetch('/api/get-products')
-      .then((res) => res.json())
-      .then((data) => setProduct(data.items));
-  }, []);
 
   const handleClick = () => {
     if (inputRef.current === null || inputRef.current.value === '') {
@@ -43,15 +35,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <div>
-          {product?.map((item) => (
-            <div key={item.id}>
-              {item.name} {item.createdAt}
-            </div>
-          ))}
-        </div>
-      </main>
+      <main></main>
     </>
   );
 }

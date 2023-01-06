@@ -6,7 +6,7 @@ const productData: Prisma.productsCreateInput[] = Array.apply(null, Array(100)).
   name: `Dark Jean ${idx + 1}`,
   contents:
     '{"blocks":[{"key":"d7k1d","text":"this is a dark Jean!!","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":15,"length":6,"style":"BOLD"}],"entityRanges":[],"data":{}}],"entityMap":{}}',
-  category_id: 1,
+  category_id: (idx + 1) % 5 === 0 ? 5 : (idx + 1) % 5,
   image_url: `https://raw.githubusercontent.com/xiaolin/react-image-gallery/master/static/${
     (idx + 1) % 10 === 0 ? 10 : (idx + 1) % 10
   }.jpg`,
